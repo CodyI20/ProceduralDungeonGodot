@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://boi14u6apgx2h"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GenerateDugeon" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -256.0
+offset_top = 34.0
+offset_right = -29.0
+offset_bottom = 117.0
+grow_horizontal = 0
