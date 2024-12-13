@@ -8,20 +8,23 @@ var direction := Vector2.RIGHT
 var borders : Rect2
 var step_history := []
 var steps_since_turn := 0
+var tile_map_layer : TileMapLayer
 
 
-func _init(starting_pos, new_borders):
+func _init(starting_pos, new_borders, input_tile_map_layer):
 	assert(new_borders.has_point(starting_pos))
 	position = starting_pos
 	borders = new_borders
-	
+	tile_map_layer = input_tile_map_layer
+
 func walk(steps) -> Array:
 	create_room(position)
 	for step in steps:
-		if steps_since_turn >= 6:
+		if steps_since_turn >= 3:
 			change_direction()
 		if step() :
 			step_history.append(position)
+			tile_map_layer.set_cell(position,0, Vector2i(10,6),0)
 		else:
 			change_direction()
 			

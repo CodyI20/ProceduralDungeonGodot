@@ -122,8 +122,15 @@ texture = ExtResource("1_lnxa1")
 [sub_resource type="TileSet" id="TileSet_a5pxt"]
 sources/0 = SubResource("TileSetAtlasSource_25y1y")
 
-[node name="MainScene" type="Node2D"]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("rooms_container")]
 script = ExtResource("1_wxk13")
+rooms_container = NodePath("Rooms")
+tileSize = 16
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.2, 0.2)
+
+[node name="Rooms" type="Node2D" parent="."]
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 tile_set = SubResource("TileSet_a5pxt")
