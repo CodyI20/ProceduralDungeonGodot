@@ -14,7 +14,7 @@ const ROOM = preload("res://Scenes/room.tscn")
 @export var horizontalSpread = 0
 @export var cull = 0.2
 
-var path # A* pathfiunding object
+var path # A* pathfinding object
 
 func _ready():
 	if rooms_container == null:
@@ -27,6 +27,7 @@ func _ready():
 func make_many_rooms():
 	for room in rooms_container.get_children():
 		room.queue_free()
+	map.clear()
 	path = null
 	for i in range(numberOfRooms):
 		var startPosition = Vector2(randf_range(-horizontalSpread, horizontalSpread), 0)
@@ -35,9 +36,9 @@ func make_many_rooms():
 		var width = minSize + randi() % (maxSize - minSize)
 		var height = minSize + randi() % (maxSize - minSize)
 		newRoom.make_room(startPosition, Vector2(width, height) * tileSize)
-	#wait for the rooms to spread
+	# Wait for the rooms to spread
 	await get_tree().create_timer(1.1).timeout
-	#cull rooms
+	# Cull rooms
 	var roomPositions = []
 	for room in rooms_container.get_children():
 		if randf() < cull:
@@ -46,8 +47,10 @@ func make_many_rooms():
 			room.freeze = true
 			roomPositions.append(Vector2(room.position.x, room.position.y))
 	await get_tree().process_frame
-	#generate a MST
+	# Generate a MST
 	path = find_mst(roomPositions)
+	await get_tree().create_timer(1.1).timeout
+	make_map()
 
 func _draw():
 	for room in rooms_container.get_children():
@@ -68,24 +71,22 @@ func _input(event):
 			n.queue_free()
 		path = null
 		make_many_rooms()
-	if event.is_action_pressed('ui_focus_next'):
-		make_map()
 
 func find_mst(nodes):
-	#Prim's algorithm
+	# Prim's algorithm
 	path = AStar2D.new()
 	path.add_point(path.get_available_point_id(), nodes.pop_front())
 	
-	#repeat until no more node remains
+	# Repeat until no more node remains
 	while nodes:
-		var minD = INF #minimum distance so far
-		var minP = null #position of that node
-		var p = null #current position
-		#loop through all points in the path
+		var minD = INF # Minimum distance so far
+		var minP = null # Position of that node
+		var p = null # Current position
+		# Loop through all points in the path
 		for p1 in path.get_point_ids():
 			var p3
 			p3 = path.get_point_position(p1)
-			#loop though the remaining nodes
+			# Loop though the remaining nodes
 			for p2 in nodes:
 				if p3.distance_to(p2) < minD:
 					minD = p3.distance_to(p2)
@@ -98,10 +99,10 @@ func find_mst(nodes):
 	return path
 
 func make_map():
-	#created tilemap from rooms and path
+	# Created tilemap from rooms and path
 	map.clear()
 	
-	#fill tielemap with walls and then carve with empty rooms
+	# Fill tilemap with walls and then carve with empty rooms
 	var fullRectangle = Rect2()
 	for room in rooms_container.get_children():
 		var r = Rect2(room.position - room.size, room.get_node("CollisionShape2D").shape.extents * 2)
@@ -111,8 +112,8 @@ func make_map():
 	for x in range(topLeft.x, bottomRight.x):
 		for y in range(topLeft.y, bottomRight.y):
 			map.set_cell(Vector2i(x, y), 0, Vector2i(10,6))
-	#carve the rooms
-	var corridors = [] #one corridor per connection
+	# Carve the rooms
+	var corridors = [] # One corridor per connection
 	for room in rooms_container.get_children():
 		var s = (room.size / tileSize).floor()
 		var pos = map.local_to_map(room.position)
@@ -120,7 +121,7 @@ func make_map():
 		for x in range(2, s.x * 2 - 1):
 			for y in range(2, s.y * 2 - 1):
 				map.set_cell(Vector2i(ul.x + x, ul.y + y), 0, Vector2i(4, 2)) 
-		#carve the connection
+		# Carve the connection
 		var p = path.get_closest_point(Vector2(room.position.x, room.position.y))
 		for conn in path.get_point_connections(p):
 			if not conn in corridors:
@@ -130,14 +131,14 @@ func make_map():
 			corridors.append(p)
 
 func carve_path(pos1, pos2):
-	#carve a pth between two points
+	# Carve a path between two points
 	var xDiff = sign(pos2.x - pos1.x)
 	var yDiff = sign(pos2.y - pos1.y)
 	if xDiff == 0:
 		xDiff = pow(-1.0, randi() % 2)
 	if yDiff == 0:
 		yDiff = pow(-1.0, randi() % 2)
-	#choose either x and then y or y and then x
+	# Choose either x and then y or y and then x
 	var xY = pos1
 	var yX = pos2
 	if(randi() % 2) > 0:
@@ -145,7 +146,7 @@ func carve_path(pos1, pos2):
 		yX = pos1
 	for x in range(pos1.x, pos2.x, xDiff):
 		map.set_cell(Vector2i(x, xY.y), 0, Vector2i(4, 2))
-		map.set_cell(Vector2i(x, xY.y + yDiff), 0, Vector2i(4, 2)) #widen the corridors
+		map.set_cell(Vector2i(x, xY.y + yDiff), 0, Vector2i(4, 2)) # Widen the corridors
 	for y in range(pos1.y, pos2.y, yDiff):
 		map.set_cell(Vector2i(yX.x, y), 0, Vector2i(4, 2))
-		map.set_cell(Vector2i(yX.x + xDiff, y), 0, Vector2i(4, 2)) #widen the corridors
+		map.set_cell(Vector2i(yX.x + xDiff, y), 0, Vector2i(4, 2)) # Widen the corridors
