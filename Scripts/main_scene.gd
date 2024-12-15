@@ -1,13 +1,18 @@
 extends Node2D
 
 const ROOM = preload("res://Scenes/room.tscn")
+
 @onready var map: TileMapLayer = $TileMapLayer
 @onready var generate_dugeon: Button = $CanvasLayer/UI/GenerateDugeon
+@onready var number_of_rooms_slider: HSlider = $CanvasLayer/UI/NumberOfRoomsSlider
+@onready var minimum_size_slider: HSlider = $CanvasLayer/UI/MinimumSizeSlider
+@onready var maximum_size_slider: HSlider = $CanvasLayer/UI/MaximumSizeSlider
+
 
 @export var rooms_container : Node2D
 
 
-@export var tileSize = 32
+var tileSize = 16
 @export var numberOfRooms = 50
 @export var minSize = 4
 @export var maxSize = 10
@@ -15,16 +20,47 @@ const ROOM = preload("res://Scenes/room.tscn")
 @export var cull = 0.2
 
 var path # A* pathfinding object
+var making_map := false # Variable to keep track of when to delete the building blocks of the dungeon (green colliders + yellow path)
+
+	
 
 func _ready():
 	if rooms_container == null:
 		printerr("THE CONTAINER OF THE ROOMS IS NOT ASSIGNED!")
 		return
+	set_initial_slider_values()
+	_event_subscriptions()
 	randomize()
-	generate_dugeon.pressed.connect(make_many_rooms)
 	make_many_rooms()
+	
+func set_initial_slider_values() -> void:
+	number_of_rooms_slider.value = numberOfRooms
+	minimum_size_slider.value = minSize
+	maximum_size_slider.value = maxSize
+
+func _event_subscriptions() -> void:
+	generate_dugeon.pressed.connect(make_many_rooms)
+	number_of_rooms_slider.value_changed.connect(change_number_of_rooms)
+	minimum_size_slider.value_changed.connect(change_minimum_room_size)
+	maximum_size_slider.value_changed.connect(change_maximum_room_size)
+	
+func change_number_of_rooms(value : float) -> void:
+	numberOfRooms = value as int
+func change_minimum_room_size(value : float) -> void:
+	minSize = value as int
+func change_maximum_room_size(value : float) -> void:
+	maxSize = value as int
+
+func toggle_functionality(toggle_on : bool) -> void:
+	making_map = !toggle_on
+	generate_dugeon.disabled = toggle_on
+	number_of_rooms_slider.editable = !toggle_on
+	minimum_size_slider.editable = !toggle_on
+	maximum_size_slider.editable = !toggle_on
+
 
 func make_many_rooms():
+	toggle_functionality(true)
 	for room in rooms_container.get_children():
 		room.queue_free()
 	map.clear()
@@ -53,6 +89,8 @@ func make_many_rooms():
 	make_map()
 
 func _draw():
+	if making_map:
+		return
 	for room in rooms_container.get_children():
 		draw_rect(Rect2(room.position - room.size, room.size * 2), Color(0, 1, 0, 1), false)
 	if path:
@@ -99,6 +137,7 @@ func find_mst(nodes):
 	return path
 
 func make_map():
+	making_map = true
 	# Created tilemap from rooms and path
 	map.clear()
 	
@@ -129,6 +168,9 @@ func make_map():
 				var end = map.local_to_map(Vector2(path.get_point_position(conn).x, path.get_point_position(conn).y))
 				carve_path(start, end)
 			corridors.append(p)
+	
+	# Reset the settings button and sliders
+	toggle_functionality(false)
 
 func carve_path(pos1, pos2):
 	# Carve a path between two points

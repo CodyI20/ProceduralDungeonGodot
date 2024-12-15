@@ -1,5 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://boi14u6apgx2h"]
+[gd_scene load_steps=3 format=3 uid="uid://boi14u6apgx2h"]
 
+[ext_resource type="Script" path="res://Scenes/ui.gd" id="1_agcjq"]
 [ext_resource type="Script" path="res://Scripts/sliders_value_update.gd" id="2_ftjk3"]
 
 [node name="UI" type="Control"]
@@ -10,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_agcjq")
 
 [node name="GenerateDugeon" type="Button" parent="."]
 layout_mode = 1
@@ -23,6 +25,45 @@ offset_bottom = 117.0
 grow_horizontal = 0
 text = "GENERATE DUNGEON"
 
+[node name="TileSizeSlider" type="HSlider" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.196
+anchor_right = 1.0
+anchor_bottom = 0.196
+offset_left = -248.0
+offset_top = -8.68001
+offset_right = -30.0
+offset_bottom = 9.31999
+min_value = 32.0
+max_value = 96.0
+step = 32.0
+value = 32.0
+script = ExtResource("2_ftjk3")
+
+[node name="NameLabel" type="Label" parent="TileSizeSlider"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -21.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "TILE SIZE"
+
+[node name="ValueLabel" type="Label" parent="TileSizeSlider"]
+layout_mode = 0
+offset_left = 219.0
+offset_top = -3.0
+offset_right = 246.0
+offset_bottom = 20.0
+text = "32"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
 [node name="NumberOfRoomsSlider" type="HSlider" parent="."]
 layout_mode = 1
 anchors_preset = -1
@@ -30,13 +71,10 @@ anchor_left = 1.0
 anchor_top = 0.234
 anchor_right = 1.0
 anchor_bottom = 0.234
-offset_left = -253.0
-offset_top = -73.72
-offset_right = -35.0
-offset_bottom = -55.72
-min_value = 2.0
-max_value = 200.0
-value = 2.0
+offset_left = -248.0
+offset_top = -8.72002
+offset_right = -30.0
+offset_bottom = 9.27998
 script = ExtResource("2_ftjk3")
 
 [node name="NameLabel" type="Label" parent="NumberOfRoomsSlider"]
@@ -50,14 +88,6 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "NUMBER OF ROOMS"
 
-[node name="ValueLabel" type="Label" parent="NumberOfRoomsSlider"]
-offset_left = 218.0
-offset_top = -3.0
-offset_right = 246.0
-offset_bottom = 20.0
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="MinimumSizeSlider" type="HSlider" parent="."]
 layout_mode = 1
 anchors_preset = -1
@@ -65,14 +95,10 @@ anchor_left = 1.0
 anchor_top = 0.274
 anchor_right = 1.0
 anchor_bottom = 0.274
-offset_left = -253.0
-offset_top = -73.92
-offset_right = -35.0
-offset_bottom = -55.92
-min_value = 4.0
-max_value = 10.0
-value = 4.0
-rounded = true
+offset_left = -248.0
+offset_top = -8.92001
+offset_right = -30.0
+offset_bottom = 9.07999
 script = ExtResource("2_ftjk3")
 
 [node name="NameLabel" type="Label" parent="MinimumSizeSlider"]
@@ -86,14 +112,6 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "MINIMUM ROOM SIZE"
 
-[node name="ValueLabel" type="Label" parent="MinimumSizeSlider"]
-offset_left = 218.0
-offset_top = -3.0
-offset_right = 246.0
-offset_bottom = 20.0
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="MaximumSizeSlider" type="HSlider" parent="."]
 layout_mode = 1
 anchors_preset = -1
@@ -101,14 +119,10 @@ anchor_left = 1.0
 anchor_top = 0.311
 anchor_right = 1.0
 anchor_bottom = 0.311
-offset_left = -253.0
-offset_top = -73.88
-offset_right = -35.0
-offset_bottom = -55.88
-min_value = 10.0
-max_value = 20.0
-value = 10.0
-rounded = true
+offset_left = -248.0
+offset_top = -8.88004
+offset_right = -30.0
+offset_bottom = 9.11996
 script = ExtResource("2_ftjk3")
 
 [node name="NameLabel" type="Label" parent="MaximumSizeSlider"]
@@ -122,14 +136,7 @@ grow_horizontal = 2
 grow_vertical = 2
 text = "MAXIMUM ROOM SIZE"
 
-[node name="ValueLabel" type="Label" parent="MaximumSizeSlider"]
-offset_left = 218.0
-offset_top = -3.0
-offset_right = 246.0
-offset_bottom = 20.0
-horizontal_alignment = 1
-vertical_alignment = 1
-
+[connection signal="value_changed" from="TileSizeSlider" to="TileSizeSlider" method="_on_slider_value_changed"]
 [connection signal="value_changed" from="NumberOfRoomsSlider" to="NumberOfRoomsSlider" method="_on_slider_value_changed"]
 [connection signal="value_changed" from="MinimumSizeSlider" to="MinimumSizeSlider" method="_on_slider_value_changed"]
 [connection signal="value_changed" from="MaximumSizeSlider" to="MaximumSizeSlider" method="_on_slider_value_changed"]

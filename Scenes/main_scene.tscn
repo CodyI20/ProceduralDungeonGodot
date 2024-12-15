@@ -125,7 +125,6 @@ sources/0 = SubResource("TileSetAtlasSource_25y1y")
 [node name="MainScene" type="Node2D" node_paths=PackedStringArray("rooms_container")]
 script = ExtResource("1_wxk13")
 rooms_container = NodePath("Rooms")
-tileSize = 16
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.2, 0.2)
@@ -142,5 +141,47 @@ metadata/_edit_use_anchors_ = true
 
 [node name="GenerateDugeon" parent="CanvasLayer/UI" index="0"]
 metadata/_edit_use_anchors_ = true
+
+[node name="ValueLabel" parent="CanvasLayer/UI/NumberOfRoomsSlider" index="1"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -1.0
+offset_top = -11.0
+offset_right = 27.0
+offset_bottom = 12.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="ValueLabel" parent="CanvasLayer/UI/MinimumSizeSlider" index="1"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 0.0
+offset_top = -11.0
+offset_right = 28.0
+offset_bottom = 12.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="ValueLabel" parent="CanvasLayer/UI/MaximumSizeSlider" index="1"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 2.0
+offset_top = -11.0
+offset_right = 30.0
+offset_bottom = 12.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [editable path="CanvasLayer/UI"]
